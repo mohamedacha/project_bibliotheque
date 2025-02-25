@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
+use App\Events\CreateEvent;
+use App\Events\DeleteEvent;
+use App\Events\UpdateEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -89,6 +92,7 @@ class BookController extends Controller
         $book->prix = $request->prix;
         $book->save();
         Log::info('Un nouveau livre a été ajouté avec l\'id: ' . $book->id);
+        CreateEvent::dispatch();
         return redirect()->route('book.index');
     }
 
@@ -152,6 +156,7 @@ class BookController extends Controller
         $book->save();
         
         Log::info('Le livre a été mis à jour :' . $book->id);
+        UpdateEvent::dispatch();
         return redirect()->route('book.index');
     }
 
@@ -176,7 +181,10 @@ class BookController extends Controller
         // Log::warning('Le livre a été supprimé :' . $book->id);
         // return redirect()->route('book.index');
         $book = Book::findOrFail($id);
+    DeleteEvent::dispatch();
+
     $book->delete(); // Soft delete
+    
     return redirect()->route('book.index')->with('success', 'Livre supprimé (Soft Delete).');
     }
     public function restore($id)
@@ -190,6 +198,10 @@ public function forceDelete($id)
 {
     $book = Book::onlyTrashed()->findOrFail($id);
     $book->forceDelete(); // Suppression définitive
+    
+    
+    Log::warning('Le livre a été supprimé :' . $book->id);
+    DeleteEvent::dispatch();
     return redirect()->route('book.index')->with('success', 'Livre supprimé définitivement.');
 }
 

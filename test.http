@@ -19,7 +19,7 @@ content-type: application/json
 {
     "nom": "mohamede",
     "prenom": "achahour",
-    "email": "achahourmohamed09788170@gmail.com",
+    "email": "achahourmohamed097808170@gmail.com",
     "tel":"0688939667",
     "password": "12345678",
     "password_confirmation": "12345678"
